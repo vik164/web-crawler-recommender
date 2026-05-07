@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wikipedia Page Data</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem auto; max-width: 960px; line-height: 1.5; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+    a { color: #2563eb; text-decoration: none; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f8fafc; padding: 0.8rem; border-radius: 6px; }
+    .muted { color: #555; }
+    ul { margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+  <h1>Page Data & Recommendations</h1>
+  <p><a href="/">Home</a> · <a href="/searchPersonal">Search</a></p>
+
+  {% if page %}
+  <div class="card">
+    <h2>{{ page.title }}</h2>
+    <p><a href="{{ page.url }}" target="_blank">{{ page.url }}</a></p>
+    <p class="muted">PageRank: {{ "%.6f"|format(page.pageRank) }} · incoming={{ page.incomingCount }} · outgoing={{ page.outgoingCount }}</p>
+
+    <h3>Body (excerpt)</h3>
+    <pre>{{ page.body[:1500] }}{% if page.body|length > 1500 %}...{% endif %}</pre>
+
+    <h3>Outgoing links (first 20)</h3>
+    <ul>
+      {% for link in page.outgoingUrls[:20] %}
+      <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  <div class="card">
+    <p class="muted">No page payload provided for this view.</p>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h3>Recommendations</h3>
+    {% if recommendations %}
+      <ul>
+        {% for rec in recommendations %}
+        <li>
+          <strong>#{{ rec.name }}</strong> ·
+          <a href="{{ rec.url }}" target="_blank">{{ rec.title }}</a>
+          {% if rec.similarity is defined %}
+          (similarity={{ "%.6f"|format(rec.similarity) }})
+          {% endif %}
+          · <a href="/data/{{ rec.name }}">details</a>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No recommendations available.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

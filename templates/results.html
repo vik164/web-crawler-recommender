@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wikipedia Search</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem auto; max-width: 960px; line-height: 1.5; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+    input[type="text"], input[type="number"], select {
+      width: 100%; padding: 0.55rem; margin-top: 0.25rem; border: 1px solid #bbb; border-radius: 6px;
+    }
+    label { display: block; margin-top: 0.6rem; font-weight: 600; }
+    button { margin-top: 0.9rem; padding: 0.6rem 1rem; border: none; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
+    a { color: #2563eb; text-decoration: none; }
+    .muted { color: #555; }
+    .result { padding: 0.5rem 0; border-top: 1px solid #eee; }
+    .small { font-size: 0.92rem; color: #444; }
+  </style>
+</head>
+<body>
+  <h1>Wikipedia Search</h1>
+  <p><a href="/">← Back to crawler setup</a></p>
+
+  <div class="card">
+    <form action="/personal" method="get">
+      <label for="q">Search query</label>
+      <input id="q" name="q" type="text" value="{{ query }}" placeholder="e.g. spider hero marvel">
+
+      <label for="boost">Use PageRank boost</label>
+      <select id="boost" name="boost">
+        <option value="on" {% if boost == 'on' %}selected{% endif %}>On</option>
+        <option value="off" {% if boost == 'off' %}selected{% endif %}>Off</option>
+      </select>
+
+      <label for="limit">Top results limit</label>
+      <input id="limit" name="limit" type="number" min="1" max="100" value="{{ limit }}">
+
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Results ({{ results|length }})</h3>
+    {% if results %}
+      {% for r in results %}
+      <div class="result">
+        <div><strong>#{{ r.name }}</strong> · <a href="{{ r.url }}" target="_blank">{{ r.title }}</a></div>
+        <div class="small">score={{ "%.6f"|format(r.score) }} · pagerank={{ "%.6f"|format(r.pr) }}</div>
+        <div class="small">
+          <a href="/data/{{ r.name }}">View internal data</a> ·
+          <a href="/recommend/{{ r.name }}">Recommendations</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">No results yet. Crawl pages first, then search.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
