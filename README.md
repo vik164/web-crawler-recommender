@@ -1,4 +1,4 @@
-# Wikipedia Web Crawler + Recommender (Python)
+# Wikipedia Web Crawler + Recommender
 
 A Python-based Wikipedia crawler and recommender system with a web UI.
 
